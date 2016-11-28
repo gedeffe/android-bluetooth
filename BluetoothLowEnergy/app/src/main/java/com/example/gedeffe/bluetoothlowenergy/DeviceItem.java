@@ -1,5 +1,7 @@
 package com.example.gedeffe.bluetoothlowenergy;
 
+import android.bluetooth.BluetoothDevice;
+
 /**
  * Created by gcscb2 on 18/11/16.
  */
@@ -7,14 +9,14 @@ public class DeviceItem {
 
     private String deviceName;
     private String address;
-    private boolean connected;
+    private BluetoothDevice realDevice;
 
     public String getDeviceName() {
         return deviceName;
     }
 
-    public boolean getConnected() {
-        return connected;
+    public BluetoothDevice getRealDevice() {
+        return this.realDevice;
     }
 
     public String getAddress() {
@@ -25,10 +27,10 @@ public class DeviceItem {
         this.deviceName = deviceName;
     }
 
-    public DeviceItem(String name, String address, boolean connected){
+    public DeviceItem(String name, String address, BluetoothDevice device) {
         this.deviceName = name;
         this.address = address;
-        this.connected = connected;
+        this.realDevice = device;
     }
 
     @Override

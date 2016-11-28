@@ -30,7 +30,7 @@ public class LeDeviceListAdapter extends ArrayAdapter<DeviceItem> implements Lis
         // first, check that provided device is not already listed
         if (!this.realDevices.contains(device)) {
             this.realDevices.add(device);
-            DeviceItem deviceItem = new DeviceItem(device.getName(), device.getAddress(), device.getBondState() == BluetoothDevice.BOND_BONDED);
+            DeviceItem deviceItem = new DeviceItem(device.getName(), device.getAddress(), device);
             this.add(deviceItem);
         }
     }

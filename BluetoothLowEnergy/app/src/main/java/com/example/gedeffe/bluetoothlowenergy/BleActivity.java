@@ -1,5 +1,6 @@
 package com.example.gedeffe.bluetoothlowenergy;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -8,6 +9,8 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -45,11 +48,7 @@ public class BleActivity extends AppCompatActivity {
                  As this method is called frequently (not only once), we have to use a flag to avoid
                   recursion on device handling.
                   */
-                if (isChecked && mHandler == null) {
-                    scanLeDevice(isChecked);
-                } else {
-                    scanLeDevice(isChecked);
-                }
+                scanLeDevice(isChecked);
             }
         });
 
@@ -57,6 +56,20 @@ public class BleActivity extends AppCompatActivity {
         // initialize list adapter
         this.mLeDeviceListAdapter = new LeDeviceListAdapter(this, android.R.layout.simple_list_item_1);
         this.devicesListView.setAdapter(this.mLeDeviceListAdapter);
+        devicesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                DeviceItem item = (DeviceItem) mLeDeviceListAdapter.getItem(position);
+                // stop current discovery (if any)
+                scanLeDevice(false);
+                // prepare common data
+                SharedDataHandler.setDeviceItem(item);
+                // move to connection activity once we have selected a device
+                Intent intent = new Intent(BleActivity.this, DeviceControlActivity.class);
+                //based on item add info to intent
+                startActivity(intent);
+            }
+        });
 
         // retrieve bluetooth settings
         bluetoothManager =
@@ -110,7 +123,10 @@ public class BleActivity extends AppCompatActivity {
             if (mBluetoothAdapter != null) {
                 mBluetoothAdapter.stopLeScan(mLeScanCallback);
             }
-            mHandler = null;
+            if (mHandler != null) {
+                mHandler.removeCallbacksAndMessages(null);
+                mHandler = null;
+            }
         }
     }
 
